@@ -7,7 +7,7 @@
  * @package GolPHP
  */
 
-require_once('app/implementation.php');
+require_once('lib/implementation.php');
 
 $game = new App_Implementation(30,30,10,10);
 
