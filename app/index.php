@@ -9,16 +9,10 @@
 
 require_once('lib/implementation.php');
 
-$game = new App_Implementation(30,30,10,10);
+$game = new App_Implementation(30,30,5,5);
 
-?>
-<html>
-<head>
-	<title>GolPHP</title>
-</head>
-<body>
-	<div class="container">
-		<?php echo $game->initContainer(); ?>
-	</div>
-</body>
-</html>
+# Start the Session
+$game->initSession();
+
+// (isset($_GET['action']) && $_GET['action'] == 'refresh') ? refresh() : display();
+(isset($_GET['action']) && $_GET['action'] == 'refresh') ? $game->getKaos() : $game->initContainer();

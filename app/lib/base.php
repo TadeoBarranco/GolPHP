@@ -5,7 +5,7 @@
  * to make possible the "Game of Life" view
  *
  * @author Tadeo Barranco <tbarrancoa@gmail.com>
- * @package GolPHP/app/
+ * @package GolPHP/app/lib
  */
 
 class App_Base {
@@ -15,7 +15,9 @@ class App_Base {
 	public $gridWidth;
 	public $gridHeight;
 	public $gridSize;
-	public $beginning;
+	public $beginning = array();
+	public $kaos = array();
+	public $grid;
 
 	/**
 	 * this function define the grid container dimensions of our "Game of Life"
@@ -30,8 +32,6 @@ class App_Base {
 		$this->gridWidth  	= $gridWidth;
 		$this->gridHeight 	= $gridHeight;
 		$this->gridSize   	= $gridWidth * $gridHeight;
-		
-		echo $this->cellWidth .' '. $this->cellHeight .' '. $this->gridWidth .' '. $this->gridHeight .' '. $this->gridSize;
 	}
 
 	/**
