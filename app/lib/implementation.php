@@ -10,34 +10,24 @@
 
 require_once('base.php');
 
-class App_Implementation extends App_Base {
+class App_Lib_Implementation extends App_Lib_Base {
 
 	/**
-	 * just a function to start with the session 
-	 * @return bool 
-	 */
-	public function initSession(){
-		session_start();
-		return true;
-	}
-
-	/**
-	 * this functions init the container as a table of our "Game of Life"
+	 * this functions init our "Game of Life" board
 	 * 
-	 * @return string html table structure 
+	 * @return string html structure 
 	 */
 	public function initContainer(){
 		$this->theBeginning();
 		$_SESSION['beginning'] = $this->beginning;
-		$this->grid = $this->createGrid($this->beginning);
-		print $this->getPage($this->grid);
+		print $this->getPage($this->createGrid($this->beginning));
 	}
 
 	/**
 	 * this functions create the grid of our "Game of Life"
 	 *
 	 * @param array $data the array with the column values
-	 * @return string html table tag
+	 * @return string html table node
 	 */
 	public function createGrid($data){
 		return "<table cellpadding='0' cellspacing='0' border='0'>{$this->createRowsAndColumns($data)}</table>";
@@ -47,7 +37,7 @@ class App_Implementation extends App_Base {
 	 * this function generate the rows and columns of the grid
 	 * 
 	 * @param  array $data the array with the column values
-	 * @return string html tr and td tags
+	 * @return string html tr and td nodes
 	 */
 	public function createRowsAndColumns($data){
 		$html = '';
@@ -95,7 +85,9 @@ class App_Implementation extends App_Base {
 	 * @return string style html node
 	 */
 	public function getStyles(){
-		return "<style></style>";
+		return "<style>
+			table tr td{width: {$this->cellWidth}; height: {$this->cellHeight}; border: 1px solid #D8D8D8; -webkit-border-radius:5px; -moz-border-radius:5px 5px 5px 5px; border-radius:5px; border-collapse: separate;}
+			</style>";
 	}
 
 	/**
@@ -104,7 +96,19 @@ class App_Implementation extends App_Base {
 	 * @return string script html node
 	 */
 	public function getJs(){
-		return "<script type='text/javascript'></script>";
+		return "
+			<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script>
+			<script type='text/javascript'>
+				function getKaos(){
+					var kaos = jQuery.ajax({
+						url 	: 'http://gol.crowd.mx/?kaos=1',
+						type 	: 'html',
+						async	: false,
+					}).responseText;
+					jQuery('.container').html(kaos);
+				}
+				setInterval('getKaos()', 1000);
+			</script>";
 	}
 
 	/**
@@ -129,8 +133,48 @@ class App_Implementation extends App_Base {
 		}
 	}
 
+	/**
+	 * function to get the kaos of our beginning state 
+	 * 
+	 * @return string table html node
+	 */
 	public function getKaos(){
-		$this->kaos = $_SESSION['beginning'];
+		$this->getNewBeginning($_SESSION['beginning']);
+		$_SESSION['beginning'] = $this->kaos;
+		print $this->createGrid($this->kaos);
+	}
+
+	/**
+	 * function to get the next state of each cell inside the beginning array
+	 * 
+	 * @param  array $beginning the current array state
+	 * @return array the next array called kaos
+	 */
+	public function getNewBeginning($beginning){
+		$rule1 = 2;
+		$rule2 = 3;
+		
+		// Cycle through cells (i = row | j = column)
+		for ($i=0; $i < $this->gridSize; $i++) {
+			for ($j = 0; $j < $this->gridSize; $j++) {
+				// Looking for active neighbours
+				$neighbours	= $beginning[$j - 1][$i + 0]
+							+ $beginning[$j + 1][$i + 0]
+							+ $beginning[$j + 0][$i - 1]
+							+ $beginning[$j + 0][$i + 1]
+							+ $beginning[$j - 1][$i - 1]
+							+ $beginning[$j - 1][$i + 1]
+							+ $beginning[$j + 1][$i - 1]
+							+ $beginning[$j + 1][$i + 1];
+				
+				// What is the nex status of the current cell
+				if ($neighbours == $rule1 || $neighbours == $rule2) {
+					$this->kaos[$j][$i] = 1;
+				} else {
+					$this->kaos[$j][$i] = 0;
+				}
+			}
+		}
 	}
 
 }

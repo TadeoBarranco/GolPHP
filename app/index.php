@@ -9,10 +9,19 @@
 
 require_once('lib/implementation.php');
 
-$game = new App_Implementation(30,30,5,5);
+/**
+ * create an instance of App_Lib_Implementation class
+ *
+ * @param string cell width in pixels
+ * @param string cell height in pixels
+ * @param int grid width
+ * @param int grid height
+ * @var App_Lib_Implementation
+ */
+$game = new App_Lib_Implementation('30px','30px',5,5);
 
-# Start the Session
+// Start session
 $game->initSession();
 
-// (isset($_GET['action']) && $_GET['action'] == 'refresh') ? refresh() : display();
-(isset($_GET['action']) && $_GET['action'] == 'refresh') ? $game->getKaos() : $game->initContainer();
+// Looking for a 
+(isset($_GET['kaos']) && $_GET['kaos'] == 1) ? $game->getKaos() : $game->initContainer();

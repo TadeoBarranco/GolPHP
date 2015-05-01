@@ -8,7 +8,7 @@
  * @package GolPHP/app/lib
  */
 
-class App_Base {
+class App_Lib_Base {
 
 	public $cellWidth;
 	public $cellHeight;
@@ -17,7 +17,6 @@ class App_Base {
 	public $gridSize;
 	public $beginning = array();
 	public $kaos = array();
-	public $grid;
 
 	/**
 	 * this function define the grid container dimensions of our "Game of Life"
@@ -35,8 +34,18 @@ class App_Base {
 	}
 
 	/**
-	 * this functions init the container as a table of our "Game of Life"
-	 * @return string html table structure 
+	 * just a function to start with the session 
+	 * 
+	 * @return array $_SESSION 
+	 */
+	public function initSession(){
+		session_start();
+	}
+
+	/**
+	 * this functions init our "Game of Life" board
+	 * 
+	 * @return string html structure 
 	 */
 	public function initContainer(){
 		$html = '';
@@ -44,21 +53,49 @@ class App_Base {
 	}
 
 	/**
-	 * this functions create the grid of our "Game of Life"
-	 * @return string html tr and td tags
+	 * function to define what are the beginning of cells marks as 1
+	 * 
+	 * @return array the beginning positions of our "Game of Life" implementation
 	 */
-	public function createGrid(){
-		$html = '';
-		return $html;
+	public function theBeginning(){
+		for ($x = 0; $x < $this->gridSize; $x++) {
+			for ($y = 0; $y < $this->gridSize; $y++) {
+				$this->beginning[$x][$y] = (rand(0,500) > 450)? 1 : 0;
+			}
+		}
 	}
 
 	/**
-	 * function to define what are the beginning of cells marks as 1
-	 * @return array the grid positions with value equals to 1;
+	 * function to get the next state of each cell inside the beginning array
+	 * 
+	 * @param  array $beginning the current array state
+	 * @return array the next array called kaos
 	 */
-	public function theBeginning(){
-		$this->beginning = array();
+	public function getNewBeginning($beginning){
+		$rule1 = 2;
+		$rule2 = 3;
+		
+		// Cycle through cells (i = row | j = column)
+		for ($i=0; $i < $this->gridSize; $i++) {
+			for ($j = 0; $j < $this->gridSize; $j++) {
+				// Looking for active neighbours
+				$neighbours	= $beginning[$j - 1][$i + 0]
+							+ $beginning[$j + 1][$i + 0]
+							+ $beginning[$j + 0][$i - 1]
+							+ $beginning[$j + 0][$i + 1]
+							+ $beginning[$j - 1][$i - 1]
+							+ $beginning[$j - 1][$i + 1]
+							+ $beginning[$j + 1][$i - 1]
+							+ $beginning[$j + 1][$i + 1];
+				
+				// What is the nex status of the current cell
+				if ($neighbours == $rule1 || $neighbours == $rule2) {
+					$this->kaos[$j][$i] = 1;
+				} else {
+					$this->kaos[$j][$i] = 0;
+				}
+			}
+		}
 	}
-
 
 }
