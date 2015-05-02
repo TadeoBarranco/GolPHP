@@ -18,7 +18,7 @@ require_once('lib/implementation.php');
  * @param int grid height
  * @var App_Lib_Implementation
  */
-$game = new App_Lib_Implementation('30px','30px',5,5);
+$game = new App_Lib_Implementation('30px','30px',3,3);
 
 // Start session
 $game->initSession();

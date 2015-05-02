@@ -18,7 +18,8 @@ class App_Lib_Implementation extends App_Lib_Base {
 	 * @return string html structure 
 	 */
 	public function initContainer(){
-		$this->theBeginning();
+		// $this->theBeginning();
+		$this->theBeginning(0,0);
 		$_SESSION['beginning'] = $this->beginning;
 		print $this->getPage($this->createGrid($this->beginning));
 	}
@@ -107,7 +108,7 @@ class App_Lib_Implementation extends App_Lib_Base {
 					}).responseText;
 					jQuery('.container').html(kaos);
 				}
-				setInterval('getKaos()', 1000);
+				setInterval('getKaos()', 10000);
 			</script>";
 	}
 
@@ -123,14 +124,12 @@ class App_Lib_Implementation extends App_Lib_Base {
 
 	/**
 	 * function to define what are the beginning of cells marks as 1
+	 * 
 	 * @return array the beginning positions of our "Game of Life" implementation
 	 */
-	public function theBeginning(){
-		for ($x = 0; $x < $this->gridSize; $x++) {
-			for ($y = 0; $y < $this->gridSize; $y++) {
-				$this->beginning[$x][$y] = (rand(0,500) > 450)? 1 : 0;
-			}
-		}
+	public function theBeginning($row, $col){
+		$this->beginning[$row][$col] = (rand(0,500) > 450) ? 1 : 0;
+		return (($row+1) == $this->gridSize && ($col+1) == $this->gridSize) ? false : ((($col+1) == $this->gridSize) ? $this->theBeginning(($row+1), 0) : $this->theBeginning($row, ($col+1)));
 	}
 
 	/**
@@ -151,30 +150,25 @@ class App_Lib_Implementation extends App_Lib_Base {
 	 * @return array the next array called kaos
 	 */
 	public function getNewBeginning($beginning){
-		$rule1 = 2;
-		$rule2 = 3;
-		
-		// Cycle through cells (i = row | j = column)
-		for ($i=0; $i < $this->gridSize; $i++) {
-			for ($j = 0; $j < $this->gridSize; $j++) {
-				// Looking for active neighbours
-				$neighbours	= $beginning[$j - 1][$i + 0]
-							+ $beginning[$j + 1][$i + 0]
-							+ $beginning[$j + 0][$i - 1]
-							+ $beginning[$j + 0][$i + 1]
-							+ $beginning[$j - 1][$i - 1]
-							+ $beginning[$j - 1][$i + 1]
-							+ $beginning[$j + 1][$i - 1]
-							+ $beginning[$j + 1][$i + 1];
-				
-				// What is the nex status of the current cell
-				if ($neighbours == $rule1 || $neighbours == $rule2) {
-					$this->kaos[$j][$i] = 1;
-				} else {
-					$this->kaos[$j][$i] = 0;
-				}
+		for ($row = 0; $row < $this->gridSize; $row++) {
+			for ($col = 0; $col < $this->gridSize; $col++) {
+				$isActive 	= $beginning[$row][$col];
+				$neighbours = $this->getNeighboursActiveCount($row, $col, $beginning);
+				$this->kaos[$row][$col] = (!$isActive && $neighbours == 3) || ($isActive && $neighbours == 2) || ($isActive && $neighbours == 3);
 			}
 		}
+		retr
+	}
+
+	/**
+	 * function to get active neighbours count of the current cell
+	 * 
+	 * @param  int $row row index of the beginning array
+	 * @param  int $col colum index of the beginning array
+	 * @return int active neighbours count
+	 */
+	public function getNeighboursActiveCount($row, $col, $beginning){
+		return $beginning[$row - 1][$col] + $beginning[$row - 1][$col + 1] + $beginning[$row][$col + 1] + $beginning[$row + 1][$col + 1] + $beginning[$row + 1][$col] + $beginning[$row + 1][$col - 1] + $beginning[$row][$col - 1] + $beginning[$row - 1][$col -1];
 	}
 
 }

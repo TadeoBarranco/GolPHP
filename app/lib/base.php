@@ -72,27 +72,27 @@ class App_Lib_Base {
 	 * @return array the next array called kaos
 	 */
 	public function getNewBeginning($beginning){
-		$rule1 = 2;
-		$rule2 = 3;
-		
-		// Cycle through cells (i = row | j = column)
-		for ($i=0; $i < $this->gridSize; $i++) {
-			for ($j = 0; $j < $this->gridSize; $j++) {
-				// Looking for active neighbours
-				$neighbours	= $beginning[$j - 1][$i + 0]
-							+ $beginning[$j + 1][$i + 0]
-							+ $beginning[$j + 0][$i - 1]
-							+ $beginning[$j + 0][$i + 1]
-							+ $beginning[$j - 1][$i - 1]
-							+ $beginning[$j - 1][$i + 1]
-							+ $beginning[$j + 1][$i - 1]
-							+ $beginning[$j + 1][$i + 1];
+		for ($row = 0; $row < $this->gridSize; $row++) {
+			for ($col = 0; $col < $this->gridSize; $col++) {
+				$isActive 	= $beginning[$row][$col];
 				
-				// What is the nex status of the current cell
-				if ($neighbours == $rule1 || $neighbours == $rule2) {
-					$this->kaos[$j][$i] = 1;
-				} else {
-					$this->kaos[$j][$i] = 0;
+				$neighbours = $beginning[$row - 1][$col]
+							+ $beginning[$row - 1][$col + 1]
+							+ $beginning[$row][$col + 1]
+							+ $beginning[$row + 1][$col + 1]
+							+ $beginning[$row + 1][$col]
+							+ $beginning[$row + 1][$col - 1]
+							+ $beginning[$row][$col - 1]
+							+ $beginning[$row - 1][$col -1];
+
+				if(!$isActive && $neighbours == 3){
+					$this->kaos[$row][$col] = 1;
+				} else if($isActive && $neighbours == 2){
+					$this->kaos[$row][$col] = 1;
+				} else if($isActive && $neighbours == 3){
+					$this->kaos[$row][$col] = 1;
+				} else{
+					$this->kaos[$row][$col] = 0;
 				}
 			}
 		}
