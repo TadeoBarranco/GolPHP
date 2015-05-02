@@ -138,25 +138,24 @@ class App_Lib_Implementation extends App_Lib_Base {
 	 * @return string table html node
 	 */
 	public function getKaos(){
-		$this->getNewBeginning($_SESSION['beginning']);
+		$this->getNewBeginning(0, 0, $_SESSION['beginning']);
 		$_SESSION['beginning'] = $this->kaos;
 		print $this->createGrid($this->kaos);
 	}
 
 	/**
 	 * function to get the next state of each cell inside the beginning array
-	 * 
+	 *
+	 * @param int $row row index of the beginning array
+	 * @param int $col column index of the beginning array
 	 * @param  array $beginning the current array state
 	 * @return array the next array called kaos
 	 */
-	public function getNewBeginning($beginning){
-		for ($row = 0; $row < $this->gridSize; $row++) {
-			for ($col = 0; $col < $this->gridSize; $col++) {
-				$isActive 	= $beginning[$row][$col];
-				$neighbours = $this->getNeighboursActiveCount($row, $col, $beginning);
-				$this->kaos[$row][$col] = (!$isActive && $neighbours == 3) || ($isActive && $neighbours == 2) || ($isActive && $neighbours == 3);
-			}
-		}
+	public function getNewBeginning($row, $col, $beginning){
+		$isActive 	= $beginning[$row][$col];
+		$neighbours = $this->getNeighboursActiveCount($row, $col, $beginning);
+		$this->kaos[$row][$col] = (!$isActive && $neighbours == 3) || ($isActive && $neighbours == 2) || ($isActive && $neighbours == 3);
+		return (($row+1) == $this->gridSize && ($col+1) == $this->gridSize) ? false : ((($col+1) == $this->gridSize) ? $this->getNewBeginning(($row+1), 0, $beginning) : $this->getNewBeginning($row, ($col+1), $beginning)); 
 	}
 
 	/**
