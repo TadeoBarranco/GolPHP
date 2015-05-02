@@ -157,7 +157,6 @@ class App_Lib_Implementation extends App_Lib_Base {
 				$this->kaos[$row][$col] = (!$isActive && $neighbours == 3) || ($isActive && $neighbours == 2) || ($isActive && $neighbours == 3);
 			}
 		}
-		retr
 	}
 
 	/**
