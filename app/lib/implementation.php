@@ -101,13 +101,13 @@ class App_Lib_Implementation extends App_Lib_Base {
 			<script type='text/javascript'>
 				function getKaos(){
 					var kaos = jQuery.ajax({
-						url 	: 'http://gol.crowd.mx/?kaos=1',
+						url 	: window.location.href+'?kaos=1',
 						type 	: 'html',
 						async	: false,
 					}).responseText;
 					jQuery('.container').html(kaos);
 				}
-				setInterval('getKaos()', 10000);
+				setInterval('getKaos()', 1000);
 			</script>";
 	}
 
