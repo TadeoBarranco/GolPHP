@@ -18,7 +18,6 @@ class App_Lib_Implementation extends App_Lib_Base {
 	 * @return string html structure 
 	 */
 	public function initContainer(){
-		// $this->theBeginning();
 		$this->theBeginning(0,0);
 		$_SESSION['beginning'] = $this->beginning;
 		print $this->getPage($this->createGrid($this->beginning));
